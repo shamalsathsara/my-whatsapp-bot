@@ -1,0 +1,21 @@
+{
+    "name": "King Aura bot , shamal sathsara",
+    "description": "Whats App user bot",
+    "version": "1.0.0",
+    "main": "bot.js",
+    "author": "Shamal Sathsara",
+    "license": "MIT",
+    "last_updated": "2025-08-15",
+    "data": {
+        "King_Aura": {
+            "owner": "SHAMAL SATHSARA 😎👾",
+            "number": ["+94771581916"],
+            "whatsapp_link": "https://wa.me/qr/KBUKPUSHBWBYN1",
+            "emoji": "👑",
+            "team": ["Team Dark"],
+            "main_group": ["https://chat.whatsapp.com/EMeIIUGv7dOBArmtO8mfwJ?mode=ac_team_link"],
+            "banned_user": "N/A",
+            "banned_group": ""
+        }
+    }
+}
