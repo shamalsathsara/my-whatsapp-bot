@@ -1,2 +1,6 @@
 * linguist-language=HTML
 *.js linguist-language=JavaScript
+
+Audios/ linguist-vendored
+Images/ linguist-vendored
+database/ linguist-vendored
