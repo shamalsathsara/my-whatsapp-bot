@@ -1,6 +1,7 @@
 
 
 // Import necessary libraries
+
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const fetch = require('node-fetch');
@@ -25,16 +26,18 @@ const { handlePanelCommand } = require('./plugins/menu.js'); // <-- Updated to m
 const { handleTagAllCommand } = require('./plugins/tagall.js'); // <-- Updated to match the new file structure
 const { handleKickCommand } = require('./plugins/kick.js'); // <-- Updated to match the new file structure
 const { handlePrivateCommand, handlePublicCommand } = require('./plugins/mode.js'); // <-- Updated to match the new file structure
+const { handleSongCommand } = require('./plugins/song.js'); // <-- Updated to match the
 
+
+
+
+
+const modeState = [false]; // This will hold the bot's mode state (private or public).
 const apiKey = "AIzaSyAdUg_umzvOIJiLFcDrqRzVvczVjjEVXaE";
 const weatherApiKey = "b5ddebf5e3cf059b5c869a6f34fd5dd5" ;
 
-
 const botOwnerNumber = '94771581916@c.us';
 const botMode = [false]; 
-
-
-
 
 
 
@@ -47,32 +50,59 @@ module.exports = {
 };
 
 // Initialize the WhatsApp client with a local authentication strategy.
+//NEW EDITED FOR UBUNTU
+
 const client = new Client({
-    authStrategy: new LocalAuth()
+    //authStrategy: new LocalAuth()
+
+    puppeteer: {
+        executablePath: '/usr/bin/google-chrome', // Use the path from Step 1
+        args: [
+            '--no-sandbox', 
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process', // Helps save RAM 
+            '--disable-gpu'
+        ],
+    }
+
 });
 
 
-client.on('message', async message => {
+client.on('message', async message => 
 
-    // Ignore messages from the bot itself.
-    // This line will print the sender's ID to the console
-console.log('Sender ID:', message.from);
-    if (message.fromMe) {
-        return;
-    }
+    {
+  // First, check the mode and if the user is the owner
+  if (modeState[0] === true && !isOwner(message, botOwnerNumber)) {
+    // If the bot is in private mode and the user is NOT the owner,
+    // tell them they can't use commands.
+    await message.reply('❌ The bot is currently in private mode. Only the owner can use commands.');
+    return; // Stop processing the message
+  }
 
-    // --- ADD THE NEW IF CONDITION HERE ---
-    // Check if the bot is in private mode and the sender is not the owner.
-    if (botMode[0] && message.from.trim() !== botOwnerNumber.trim()) {   //trim() is used to remove any leading or trailing whitespace
-        console.log(`[Private Mode] Ignoring message from: ${message.from}`);
-        return; // Stop processing the message
-    }
-    // --- END OF NEW IF CONDITION ---
-    
-    // Log the incoming message for debugging.
-    const chat = await message.getChat();
-    // ... rest of code
+  // If the above check passes (it's public mode or the user is the owner),
+  // then your normal command logic runs below this line.
+
+  // Your existing command logic
+  if (message.body === '!help') {
+    // ... run help command ...
+  }
+  
+  if (message.body === '!some_other_command') {
+    // ... run other command ...
+  }
+  
+  // You would also call your mode handlers here
+  if (message.body === '!private') {
+    handlePrivateCommand(message, botOwnerNumber, modeState);
+  } else if (message.body === '!public') {
+    handlePublicCommand(message, botOwnerNumber, modeState);
+  }
 }
+    
 
 );
 
@@ -162,9 +192,6 @@ client.on('message', async message => {
                 await handleKickCommand(message, client);
                 handledAsCommand = true;
                 break;
-
-
-
             case 'private':
                 console.log('Private command triggered');
                 await handlePrivateCommand(message, botOwnerNumber, botMode);
@@ -173,6 +200,11 @@ client.on('message', async message => {
             case 'public':
                 console.log('Public command triggered');
                 await handlePublicCommand(message, botOwnerNumber, botMode);
+                handledAsCommand = true;
+                break;
+            case 'song':
+                console.log('Song command triggered');
+                await handleSongCommand(message, args);
                 handledAsCommand = true;
                 break;
 

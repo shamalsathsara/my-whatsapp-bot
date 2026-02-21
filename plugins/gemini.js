@@ -55,6 +55,6 @@ const handleChatCommand = async (message, apiKey) => {
 };
 
 // Export the function so it can be imported and used elsewhere.
-export {
+module.export = {
     handleChatCommand
 };
