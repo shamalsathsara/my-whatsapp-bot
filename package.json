@@ -5,7 +5,7 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "start": "node AuraMain.cjs"
+    "start": "node AuraMain.js"
   },
   "keywords": [],
   "author": "",

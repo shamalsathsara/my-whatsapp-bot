@@ -22,31 +22,43 @@ const handlePanelCommand = async (message) => {
        await message.reply(audioMedia, null, { ptt: true });
 
 
-         const panelMessage = `
+         const panelMessage =  `
+╔═══════════════════════════╗
+     🔱  *𝐊𝐈𝐍𝐆 𝐀𝐔𝐑𝐀 𝐂𝐎𝐍𝐓𝐑𝐎𝐋 𝐂𝐄𝐍𝐓𝐄𝐑* 🔱
+╚═══════════════════════════╝
+
+👤 *OWNER:* Shamal Sathsara
+🆔 *DEV:* WeAreCooked
+⚙️ *PREFIX:* !
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃   📥  *MEDIA DOWNLOADERS* ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ▸ !𝘆𝘁      - Download YouTube Videos
+  ▸ !𝗳𝗯      - Download Facebook Videos
+  ▸ !𝘁𝗶𝗸𝘁𝗼𝗸  - Download TikTok Videos
+  ▸ !𝗶𝗴      - Download Instagram Posts
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃   🤖  *AI & UTILITIES*
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ▸ !𝘂𝗻𝗶     - HNDIT Resource Hub 🎓
+  ▸ !𝗰𝗵𝗮𝘁    - Talk to Gemini AI
+  ▸ !𝗶𝗺𝗮𝗴𝗲   - Generate AI Images
+  ▸ !𝘄𝗲𝗮𝘁𝗵𝗲𝗿 - Real-time Weather Info
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃   🛡️  *GROUP MANAGEMENT*
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ▸ !𝘁𝗮𝗴𝗮𝗹𝗹  - Mention All Members
+  ▸ !𝗸𝗶𝗰𝗸    - Remove User from Group
+  ▸ !𝗼𝘄𝗻𝗲𝗿   - Contact Developer
+  ▸ !𝗽𝗶𝗻𝗴    - Check System Latency
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      ✨ _Always evolving, King Aura_ ✨
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
         
-               👑 𝐓𝐇𝐈𝐒 𝐈𝐒 𝐊𝐈𝐍𝐆 𝐀𝐔𝐑𝐀 𝐏𝐀𝐍𝐄𝐋 𝐋𝐈𝐒𝐓 👑  \n
 
-
-   ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
-
-
-   🤖  𝙳𝚎𝚟𝚎𝚕𝚘𝚙𝚎𝚍 𝙱𝚢 :- 🆂🅷🅰🅼🅼🅰✍
-   
-
- ❗𝗼𝘄𝗻𝗲𝗿     - Get bot owner details.
- ❗𝘄𝗲𝗮𝘁𝗵𝗲𝗿   - Get the weather details.
- ❗𝘆𝘁         - Download a YouTube video.
- ❗𝗳𝗯         - Download a Facebook video.
- ❗𝘁𝗶𝗸𝘁𝗼𝗸     - Download a TikTok video.
- ❗𝗶𝗴         - Download on Instagram .
- ❗𝗶𝗺𝗮𝗴𝗲     - Generate image.
- ❗𝗰𝗵𝗮𝘁      - Talk to the AI. 
- ❗𝗽𝗶𝗻𝗴      - Check bot status.
- ❗𝗵𝗲𝗹𝗽      - Get a list of all commands.
- ❗kick    - Kick a user from the group.
- ❗tagall  - Tag all members in the group.
-  
-                                                                          `;
         
         // Reply to the user with the formatted panel list.
      await message.reply(media, null, { caption: panelMessage.trim() });

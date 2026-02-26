@@ -1,270 +1,206 @@
-
-
 // Import necessary libraries
-
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const fetch = require('node-fetch');
 const fs = require('fs');
+const path = require('path'); 
+
+
 // Import the owner configuration from the owner.json file.
 const ownerData = require('./owner.json');
-const { BOT_NAME, BOT_PREFIX,  } = require('./bot_settings/settings.js'); // <-- Updated to match the new file structure
-// Access the Queen Amdi bot's data
+const { BOT_NAME, BOT_PREFIX } = require('./bot_settings/settings.js'); 
+
+// Access the King Aura bot's data
 const KingAuraBot = ownerData.data.King_Aura;
-
-// Get the team members' numbers
 const teamMembers = KingAuraBot.team;
-console.log(teamMembers); // This will print the array of phone numbers.
+console.log(teamMembers); 
 
-// Import your custom plugins from the plugins folder.      P L U G I N S
+// Import your custom plugins
+const { handleWeatherCommand } = require('./plugins/weather.js');
+const { handleChatCommand } = require('./plugins/gemini.js');
+const { handleOwnerCommand } = require('./database/owner.js');
+const { handleYoutubeCommand } = require('./plugins/youtube.js');
+const { handlePanelCommand } = require('./plugins/menu.js');
+const { handleTagAllCommand } = require('./plugins/tagall.js');
+const { handleKickCommand } = require('./plugins/kick.js');
+const { handlePrivateCommand, handlePublicCommand } = require('./plugins/mode.js');
+const { handleSongCommand } = require('./plugins/song.js');
+const { hnditData } = require('./plugins/hnditData.js');
+const userSession = {};
 
-const { handleWeatherCommand } = require('./plugins/weather.js'); // <-- NEW
-const { handleChatCommand } = require('./plugins/gemini.js'); // <-- Updated to match the new file structure
-const { handleOwnerCommand } = require('./database/owner.js'); // <-- Updated to match the new file structure
-const { handleYoutubeCommand } = require('./plugins/youtube.js'); // <-- Updated to match the new file structure
-const { handlePanelCommand } = require('./plugins/menu.js'); // <-- Updated to match the new file structure
-const { handleTagAllCommand } = require('./plugins/tagall.js'); // <-- Updated to match the new file structure
-const { handleKickCommand } = require('./plugins/kick.js'); // <-- Updated to match the new file structure
-const { handlePrivateCommand, handlePublicCommand } = require('./plugins/mode.js'); // <-- Updated to match the new file structure
-const { handleSongCommand } = require('./plugins/song.js'); // <-- Updated to match the
-
-
-
-
-
-const modeState = [false]; // This will hold the bot's mode state (private or public).
+const modeState = [false]; 
 const apiKey = "AIzaSyAdUg_umzvOIJiLFcDrqRzVvczVjjEVXaE";
-const weatherApiKey = "b5ddebf5e3cf059b5c869a6f34fd5dd5" ;
+const weatherApiKey = "b5ddebf5e3cf059b5c869a6f34fd5dd5";
 
 const botOwnerNumber = '94771581916@c.us';
 const botMode = [false]; 
 
-
-
-
-module.exports = {
-    // ... other settings 
-    // can add more settings here as your bot grows.
-    BOT_NAME: 'King_Aura',
-    BOT_PREFIX: '!'
-};
-
-// Initialize the WhatsApp client with a local authentication strategy.
-//NEW EDITED FOR UBUNTU
-
+// Initialize the WhatsApp client with persistent session saving
 const client = new Client({
-    //authStrategy: new LocalAuth()
-
+    authStrategy: new LocalAuth({
+        clientId: "aura-bot", 
+        dataPath: './.wwebjs_auth' 
+    }),
     puppeteer: {
-        executablePath: '/usr/bin/google-chrome', // Use the path from Step 1
+        executablePath: '/usr/bin/google-chrome',
         args: [
             '--no-sandbox', 
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
+            '--disable-gpu', // Added to save RAM
             '--no-zygote',
-            '--single-process', // Helps save RAM 
-            '--disable-gpu'
         ],
+        headless: true,
+        // Increased timeout for file injection
+        waitForInitialPage: true,
+        defaultNavigationTimeout: 60000 
     }
-
 });
 
-
-client.on('message', async message => 
-
-    {
-  // First, check the mode and if the user is the owner
-  if (modeState[0] === true && !isOwner(message, botOwnerNumber)) {
-    // If the bot is in private mode and the user is NOT the owner,
-    // tell them they can't use commands.
-    await message.reply('❌ The bot is currently in private mode. Only the owner can use commands.');
-    return; // Stop processing the message
-  }
-
-  // If the above check passes (it's public mode or the user is the owner),
-  // then your normal command logic runs below this line.
-
-  // Your existing command logic
-  if (message.body === '!help') {
-    // ... run help command ...
-  }
-  
-  if (message.body === '!some_other_command') {
-    // ... run other command ...
-  }
-  
-  // You would also call your mode handlers here
-  if (message.body === '!private') {
-    handlePrivateCommand(message, botOwnerNumber, modeState);
-  } else if (message.body === '!public') {
-    handlePublicCommand(message, botOwnerNumber, modeState);
-  }
-}
-    
-
-);
-
-
-
-
-
-
-
-
-
-
-
-// Event listener for when the QR code is ready.
+// Event listener for QR code
 client.on('qr', qr => {
     console.log('QR RECEIVED. Please scan this code with your WhatsApp app.');
     qrcode.generate(qr, { small: true });
 });
 
-// Event listener for when the client is ready to use.
+// Event listener for Ready state
 client.on('ready', () => {
     console.log('Client is ready! The bot is now online.');
 });
 
-// Event listener for incoming messages.
+// Main message listener
 client.on('message', async message => {
-    // Ignore messages from the bot itself.
-    if (message.fromMe) {
-        return;
-    }
-    
-    // Log the incoming message for debugging.
+    if (message.fromMe) return;
+
     const chat = await message.getChat();
     console.log(`[${chat.name || message.from}] New message received: ${message.body}`);
 
-    // Call external plugins here.
-    let handled = false;
-    let handledAsCommand = false;
+    // --- UNIVERSITY NUMBER SELECTION HANDLER ---
+    
+    // --- STABLE PREMIUM UI HANDLER ---
+if (!isNaN(message.body) && !message.body.startsWith('!')) {
+    const selection = parseInt(message.body) - 1;
+    const session = userSession[message.from] || { step: 'year' };
 
+    // Return to Main Menu if 0 is pressed
+    if (message.body === '0') {
+        delete userSession[message.from];
+        return message.reply("🔄 *Session Reset*\nType !uni to see the main menu.");
+    }
+
+    if (session.step === 'year') {
+        const years = Object.keys(hnditData);
+        if (years[selection]) {
+            const selectedYear = years[selection];
+            userSession[message.from] = { step: 'sem', year: selectedYear };
+            
+            const sems = Object.keys(hnditData[selectedYear]);
+            let menu = `┏━━━━━━━━━━━━━━━━━━┓\n`;
+            menu += `┃  🎓  *${selectedYear.toUpperCase()}* ┃\n`;
+            menu += `┗━━━━━━━━━━━━━━━━━━┛\n\n`;
+            menu += `📍 *Path:* ${selectedYear}\n\n`;
+            menu += `*Select Semester:*\n\n`;
+            sems.forEach((s, i) => menu += `${i + 1}️⃣ ${s}\n`);
+            menu += `\n*0️⃣ Back to Main*`;
+            await message.reply(menu);
+        }
+    } 
+    else if (session.step === 'sem') {
+        const sems = Object.keys(hnditData[session.year]);
+        if (sems[selection]) {
+            const selectedSem = sems[selection];
+            userSession[message.from] = { step: 'subject', year: session.year, sem: selectedSem };
+
+            const subjects = Object.keys(hnditData[session.year][selectedSem]);
+            let menu = `┏━━━━━━━━━━━━━━━━━━┓\n`;
+            menu += `┃  📚  *${selectedSem.toUpperCase()}* ┃\n`;
+            menu += `┗━━━━━━━━━━━━━━━━━━┛\n\n`;
+            menu += `📍 *Path:* ${session.year} > ${selectedSem}\n\n`;
+            menu += `*Choose your Subject:*\n\n`;
+            subjects.forEach((sub, i) => menu += `🔹 ${i + 1}. ${sub}\n`);
+            menu += `\n*0️⃣ Reset Menu*`;
+            await message.reply(menu);
+        }
+    }
+    else if (session.step === 'subject') {
+        const subjects = Object.keys(hnditData[session.year][session.sem]);
+        if (subjects[selection]) {
+            const selectedSub = subjects[selection];
+            userSession[message.from] = { step: 'category', year: session.year, sem: session.sem, subject: selectedSub };
+
+            let menu = `┏━━━━━━━━━━━━━━━━━━┓\n`;
+            menu += `┃  📂  *RESOURCE BOX* ┃\n`;
+            menu += `┗━━━━━━━━━━━━━━━━━━┛\n\n`;
+            menu += `📝 *Subject:* ${selectedSub}\n`;
+            menu += `📍 *Path:* ${session.sem} > ${selectedSub}\n\n`;
+            menu += `1️⃣  Past Papers\n`;
+            menu += `2️⃣  Marking Scheme\n`;
+            menu += `3️⃣  Short Notes (KUPPI)\n\n`;
+            menu += `✨ _Powered by Aura_Bot_`;
+            await message.reply(menu);
+        }
+    }
+    else if (session.step === 'category') {
+        const subData = hnditData[session.year][session.sem][session.subject];
+        const links = [subData.pastPapers, subData.markingScheme, subData.shortNotes];
+        const labels = ["Past Papers", "Marking Scheme", "Short Notes"];
+
+        if (links[selection]) {
+            let successMsg = `✅ *DOWNLOAD READY*\n\n`;
+            successMsg += `📄 *Type:* ${labels[selection]}\n`;
+            successMsg += `📚 *Subject:* ${session.subject}\n\n`;
+            successMsg += `🔗 *Link:* ${links[selection]}\n\n`;
+            successMsg += `🚀 _Study hard, Shamal!_`;
+            
+            await message.reply(successMsg);
+            delete userSession[message.from]; // Reset session
+        }
+    }
+}
+
+    // --- COMMAND HANDLER ---
     if (message.body.startsWith('!')) {
         const args = message.body.slice(1).trim().split(/ +/);
         const command = args.shift().toLowerCase();
 
         switch (command) {
-               case 'ping':
-                message.reply('Ping is successful! The bot is online and responsive.');
-                handledAsCommand = true;
+            case 'ping':
+                message.reply('Ping is successful! The bot is online.');
                 break;
-            case 'help':
-                const helpMessage = ``;
-                message.reply(helpMessage.trim());
-                handledAsCommand = true;
+            case 'resources':
+            case 'uni':
+                const years = Object.keys(hnditData);
+                let menu = "🎓 *HNDIT RESOURCE HUB*\n\nSelect Year:\n\n";
+                years.forEach((y, i) => menu += `${i + 1}. ${y}\n`);
+                await message.reply(menu);
                 break;
+
             case 'chat':
-            case 'hi':
-                console.log('Chat command triggered with API key:', apiKey ? 'Provided' : 'Missing');
                 await handleChatCommand(message, apiKey);
-                handledAsCommand = true;
                 break;
             case 'weather':
-                console.log('Weather command triggered with API key:', weatherApiKey ? 'Provided' : 'Missing');
                 await handleWeatherCommand(message, args, weatherApiKey);
-                handledAsCommand = true;
                 break;
             case 'owner':
-                console.log('Owner command triggered');
                 await handleOwnerCommand(message);
-                handledAsCommand = true;
                 break;
             case 'yt':
-                console.log('YouTube command triggered');
                 await handleYoutubeCommand(message, args);
-                handledAsCommand = true;
                 break;
             case 'panel':
-                console.log('Panel command triggered');
                 await handlePanelCommand(message);
-                handledAsCommand = true;
                 break;
             case 'tagall':
-                console.log('TagAll command triggered');
                 await handleTagAllCommand(message, client);
-                handledAsCommand = true;
                 break;
             case 'kick':
-                console.log('Kick command triggered');
                 await handleKickCommand(message, client);
-                handledAsCommand = true;
-                break;
-            case 'private':
-                console.log('Private command triggered');
-                await handlePrivateCommand(message, botOwnerNumber, botMode);
-                handledAsCommand = true;
-                break;
-            case 'public':
-                console.log('Public command triggered');
-                await handlePublicCommand(message, botOwnerNumber, botMode);
-                handledAsCommand = true;
                 break;
             case 'song':
-                console.log('Song command triggered');
                 await handleSongCommand(message, args);
-                handledAsCommand = true;
                 break;
-
-          /*  default:
-                console.log(`Unrecognized command: ${command}`)
-                message.reply('Sorry, I don\'t recognize that command. Try !help for a list of commands.');
-                handledAsCommand = true;
-                break; */
         }
     }
-
-    // --- MODIFIED SECTION ---
-    
-    if (!handledAsCommand) {
-        console.log('Default chat response triggered with API key:', apiKey ? 'Provided' : 'Missing');
-        await handleChatCommand(message, apiKey);
-    }
- 
 });
 
-// Initialize the client to start the process.
 client.initialize();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
