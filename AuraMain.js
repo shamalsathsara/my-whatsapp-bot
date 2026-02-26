@@ -5,18 +5,19 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path'); 
 
+function logError(error) {
+    const timestamp = new Date().toLocaleString();
+    const errorLog = `[${timestamp}] ERROR: ${error.stack || error}\n`;
+    fs.appendFileSync('crash_logs.txt', errorLog);
+}
 
-// Import the owner configuration from the owner.json file.
+// Import the owner configuration
 const ownerData = require('./owner.json');
 const { BOT_NAME, BOT_PREFIX } = require('./bot_settings/settings.js'); 
 
-// Access the King Aura bot's data
-const KingAuraBot = ownerData.data.King_Aura;
-const teamMembers = KingAuraBot.team;
-console.log(teamMembers); 
-
-// Import your custom plugins
+// Import custom plugins
 const { handleWeatherCommand } = require('./plugins/weather.js');
+const   groupAdminHandler  = require('./plugins/GroupAdmin.js'); // Fixed import
 const { handleChatCommand } = require('./plugins/gemini.js');
 const { handleOwnerCommand } = require('./database/owner.js');
 const { handleYoutubeCommand } = require('./plugins/youtube.js');
@@ -26,16 +27,11 @@ const { handleKickCommand } = require('./plugins/kick.js');
 const { handlePrivateCommand, handlePublicCommand } = require('./plugins/mode.js');
 const { handleSongCommand } = require('./plugins/song.js');
 const { hnditData } = require('./plugins/hnditData.js');
-const userSession = {};
 
-const modeState = [false]; 
+const userSession = {}; // Fixed initialization
 const apiKey = "AIzaSyAdUg_umzvOIJiLFcDrqRzVvczVjjEVXaE";
 const weatherApiKey = "b5ddebf5e3cf059b5c869a6f34fd5dd5";
 
-const botOwnerNumber = '94771581916@c.us';
-const botMode = [false]; 
-
-// Initialize the WhatsApp client with persistent session saving
 const client = new Client({
     authStrategy: new LocalAuth({
         clientId: "aura-bot", 
@@ -47,172 +43,167 @@ const client = new Client({
             '--no-sandbox', 
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--disable-gpu', // Added to save RAM
+            '--disable-gpu',
             '--no-zygote',
         ],
         headless: true,
-        // Increased timeout for file injection
         waitForInitialPage: true,
         defaultNavigationTimeout: 60000 
     }
 });
 
-// Event listener for QR code
 client.on('qr', qr => {
-    console.log('QR RECEIVED. Please scan this code with your WhatsApp app.');
+    console.log('QR RECEIVED. Scan with WhatsApp.');
     qrcode.generate(qr, { small: true });
 });
 
-// Event listener for Ready state
+//Start bot
 client.on('ready', () => {
-    console.log('Client is ready! The bot is now online.');
+    
+    // Color codes
+    const cyan = "\x1b[36m";
+    const yellow = "\x1b[33m";
+    const green = "\x1b[32m";
+    const reset = "\x1b[0m";
+    const bold = "\x1b[1m";
+
+    console.clear(); // Clears the terminal for a fresh look
+    console.log(cyan + bold + `
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃                                            ┃
+    ┃   🌟  ${BOT_NAME.toUpperCase()} IS NOW ONLINE          ┃
+    ┃                                            ┃
+    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛` + reset);
+
+    console.log(yellow + bold + `    > DEVELOPED BY: ` + reset + `ShAmMa`);
+    console.log(yellow + bold + `    > TEAM:         ` + reset + `DaRk`);
+    console.log(yellow + bold + `    > STATUS:       ` + reset + green + `Active ✅` + reset);
+    console.log(cyan + `    ──────────────────────────────────────────` + reset);
+    console.log(green + `    [${new Date().toLocaleTimeString()}] System stabilized. Waiting for messages...` + reset);
 });
 
-// Main message listener
+////////////////////////////////////////////////////////////////////////////
+///////////////// MAIN MSG LISTENER ////////////////////////////////////////
+
 client.on('message', async message => {
-    try{
-    if (message.fromMe) return;
-
-    const chat = await message.getChat();
-    console.log(`[${chat.name || message.from}] New message received: ${message.body}`);
-
-    // --- UNIVERSITY NUMBER SELECTION HANDLER ---
-    
-    // --- STABLE PREMIUM UI HANDLER ---
-if (!isNaN(message.body) && !message.body.startsWith('!')) {
-    const selection = parseInt(message.body) - 1;
-    const session = userSession[message.from] || { step: 'year' };
-
-    // Return to Main Menu if 0 is pressed
-    if (message.body === '0') {
-        delete userSession[message.from];
-        return message.reply("🔄 *Session Reset*\nType !uni to see the main menu.");
-    }
-
-    if (session.step === 'year') {
-        const years = Object.keys(hnditData);
-        if (years[selection]) {
-            const selectedYear = years[selection];
-            userSession[message.from] = { step: 'sem', year: selectedYear };
-            
-            const sems = Object.keys(hnditData[selectedYear]);
-            let menu = `┏━━━━━━━━━━━━━━━━━━┓\n`;
-            menu += `┃  🎓  *${selectedYear.toUpperCase()}* ┃\n`;
-            menu += `┗━━━━━━━━━━━━━━━━━━┛\n\n`;
-            menu += `📍 *Path:* ${selectedYear}\n\n`;
-            menu += `*Select Semester:*\n\n`;
-            sems.forEach((s, i) => menu += `${i + 1}️⃣ ${s}\n`);
-            menu += `\n*0️⃣ Back to Main*`;
-            await message.reply(menu);
-        }
-    } 
-    else if (session.step === 'sem') {
-        const sems = Object.keys(hnditData[session.year]);
-        if (sems[selection]) {
-            const selectedSem = sems[selection];
-            userSession[message.from] = { step: 'subject', year: session.year, sem: selectedSem };
-
-            const subjects = Object.keys(hnditData[session.year][selectedSem]);
-            let menu = `┏━━━━━━━━━━━━━━━━━━┓\n`;
-            menu += `┃  📚  *${selectedSem.toUpperCase()}* ┃\n`;
-            menu += `┗━━━━━━━━━━━━━━━━━━┛\n\n`;
-            menu += `📍 *Path:* ${session.year} > ${selectedSem}\n\n`;
-            menu += `*Choose your Subject:*\n\n`;
-            subjects.forEach((sub, i) => menu += `🔹 ${i + 1}. ${sub}\n`);
-            menu += `\n*0️⃣ Reset Menu*`;
-            await message.reply(menu);
-        }
-    }
-    else if (session.step === 'subject') {
-        const subjects = Object.keys(hnditData[session.year][session.sem]);
-        if (subjects[selection]) {
-            const selectedSub = subjects[selection];
-            userSession[message.from] = { step: 'category', year: session.year, sem: session.sem, subject: selectedSub };
-
-            let menu = `┏━━━━━━━━━━━━━━━━━━┓\n`;
-            menu += `┃  📂  *RESOURCE BOX* ┃\n`;
-            menu += `┗━━━━━━━━━━━━━━━━━━┛\n\n`;
-            menu += `📝 *Subject:* ${selectedSub}\n`;
-            menu += `📍 *Path:* ${session.sem} > ${selectedSub}\n\n`;
-            menu += `1️⃣  Past Papers\n`;
-            menu += `2️⃣  Marking Scheme\n`;
-            menu += `3️⃣  Short Notes (KUPPI)\n\n`;
-            menu += `✨ _Powered by Aura_Bot_`;
-            await message.reply(menu);
-        }
-    }
-    else if (session.step === 'category') {
-        const subData = hnditData[session.year][session.sem][session.subject];
-        const links = [subData.pastPapers, subData.markingScheme, subData.shortNotes];
-        const labels = ["Past Papers", "Marking Scheme", "Short Notes"];
-
-        if (links[selection]) {
-
-            const userName = message._data?.notifyName || "Student";
-
-            let successMsg = `✅ *DOWNLOAD READY*\n\n`;
-            successMsg += `📄 *Type:* ${labels[selection]}\n`;
-            successMsg += `📚 *Subject:* ${session.subject}\n\n`;
-            successMsg += `🔗 *Link:* ${links[selection]}\n\n`;
-            successMsg += `🚀 _Study hard, ${userName}!_`;
-            
-            await message.reply(successMsg);
-            delete userSession[message.from]; // Reset session
-        }
-    }
-}
-
-    // --- COMMAND HANDLER ---
-    if (message.body.startsWith('!')) {
-        const args = message.body.slice(1).trim().split(/ +/);
+    try {
+        // 1. INITIALIZE COMMAND VARIABLE FIRST
+        const body = message.body || "";
+        const args = body.trim().split(/ +/);
         const command = args.shift().toLowerCase();
+        const userName = message._data?.notifyName || "Student"; // Extracted user name
 
-        switch (command) {
-            case 'ping':
-                message.reply('Ping is successful! The bot is online.');
-                break;
-            case 'resources':
-            case 'uni':
-                const years = Object.keys(hnditData);
-                let menu = "🎓 *HNDIT RESOURCE HUB*\n\nSelect Year:\n\n";
-                years.forEach((y, i) => menu += `${i + 1}. ${y}\n`);
-                await message.reply(menu);
-                break;
-
-            case 'chat':
-                await handleChatCommand(message, apiKey);
-                break;
-            case 'weather':
-                await handleWeatherCommand(message, args, weatherApiKey);
-                break;
-            case 'owner':
-                await handleOwnerCommand(message);
-                break;
-            case 'yt':
-                await handleYoutubeCommand(message, args);
-                break;
-            case 'panel':
-                await handlePanelCommand(message);
-                break;
-            case 'tagall':
-                await handleTagAllCommand(message, client);
-                break;
-            case 'kick':
-                await handleKickCommand(message, client);
-                break;
-            case 'song':
-                await handleSongCommand(message, args);
-                break;
+        // 2. ADMIN CHECK 
+        if (command === '!lock' || command === '!unlock') {
+            await groupAdminHandler(client, message, command);
+            return; 
         }
+
+        if (message.fromMe) return;
+        const chat = await message.getChat();
+        console.log(`[${chat.name || message.from}] Message: ${message.body}`);
+
+        // --- HNDIT RESOURCE SELECTION LOGIC ---
+        if (!isNaN(message.body) && !message.body.startsWith('!')) {
+            const selection = parseInt(message.body) - 1;
+            const session = userSession[message.from] || { step: 'year' };
+
+            if (message.body === '0') {
+                delete userSession[message.from];
+                return message.reply("🔄 *Session Reset*\nType !uni to see the menu.");
+            }
+
+            if (session.step === 'year') {
+                const years = Object.keys(hnditData);
+                if (years[selection]) {
+                    const selectedYear = years[selection];
+                    userSession[message.from] = { step: 'sem', year: selectedYear };
+                    const sems = Object.keys(hnditData[selectedYear]);
+                    let menu = `┏━━━━━━━━━━━━━━━━━━┓\n┃  🎓  *${selectedYear.toUpperCase()}* ┃\n┗━━━━━━━━━━━━━━━━━━┛\n\nSelect Semester:\n`;
+                    sems.forEach((s, i) => menu += `${i + 1}️⃣ ${s}\n`);
+                    await message.reply(menu);
+                }
+            } 
+            else if (session.step === 'sem') {
+                const sems = Object.keys(hnditData[session.year]);
+                if (sems[selection]) {
+                    const selectedSem = sems[selection];
+                    userSession[message.from] = { step: 'subject', year: session.year, sem: selectedSem };
+                    const subjects = Object.keys(hnditData[session.year][selectedSem]);
+                    let menu = `┏━━━━━━━━━━━━━━━━━━┓\n┃  📚  *${selectedSem.toUpperCase()}* ┃\n┗━━━━━━━━━━━━━━━━━━┛\n\nChoose Subject:\n`;
+                    subjects.forEach((sub, i) => menu += `🔹 ${i + 1}. ${sub}\n`);
+                    await message.reply(menu);
+                }
+            }
+            else if (session.step === 'subject') {
+                const subjects = Object.keys(hnditData[session.year][session.sem]);
+                if (subjects[selection]) {
+                    const selectedSub = subjects[selection];
+                    userSession[message.from] = { step: 'category', year: session.year, sem: session.sem, subject: selectedSub };
+                    let menu = `┏━━━━━━━━━━━━━━━━━━┓\n┃  📂  *RESOURCE BOX* ┃\n┗━━━━━━━━━━━━━━━━━━┛\n\n1️⃣ Past Papers\n2️⃣ Marking Scheme\n3️⃣ Short Notes\n\n✨ _Aura_Bot_`;
+                    await message.reply(menu);
+                }
+            }
+            else if (session.step === 'category') {
+                const subData = hnditData[session.year][session.sem][session.subject];
+                const links = [subData.pastPapers, subData.markingScheme, subData.shortNotes];
+                const labels = ["Past Papers", "Marking Scheme", "Short Notes"];
+
+                if (links[selection]) {
+                    let successMsg = `✅ *DOWNLOAD READY*\n\n`;
+                    successMsg += `📄 *Type:* ${labels[selection]}\n`;
+                    successMsg += `📚 *Subject:* ${session.subject}\n\n`;
+                    successMsg += `🔗 *Link:* ${links[selection]}\n\n`;
+                    successMsg += `🚀 _Study hard, ${userName}!_`; // Personalized message
+                    
+                    await message.reply(successMsg);
+                    delete userSession[message.from];
+                }
+            }
+        }
+
+        // --- COMMAND SWITCH HANDLER ---
+        if (message.body.startsWith('!')) {
+            // Remove the prefix for the switch check
+            const cmdName = command.startsWith('!') ? command.slice(1) : command;
+
+            switch (cmdName) {
+                case 'ping':
+                    message.reply('Ping successful! Online.');
+                    break;
+                case 'uni':
+                case 'resources':
+                    const years = Object.keys(hnditData);
+                    let menu = "🎓 *HNDIT RESOURCE HUB*\n\nSelect Year:\n";
+                    years.forEach((y, i) => menu += `${i + 1}. ${y}\n`);
+                    await message.reply(menu);
+                    break;
+                case 'stats':
+                    const uptime = process.uptime();
+                    const hours = Math.floor(uptime / 3600);
+                    const memory = (process.memoryUsage().heapUsed/1024/1024).toFixed(2);
+                    await message.reply(`🤖 *Aura_Bot Stats*\nUptime: ${hours}h\nMemory: ${memory}MB\nUser: ${userName}`);
+                    break;
+                case 'chat': await handleChatCommand(message, apiKey); break;
+                case 'weather': await handleWeatherCommand(message, args, weatherApiKey); break;
+                case 'yt': await handleYoutubeCommand(message, args); break;
+                case 'tagall': await handleTagAllCommand(message, client); break;
+                case 'kick': await handleKickCommand(message, client); break;
+
+                case 'lock':
+                case 'unlock':
+                await groupAdminHandler(client, message, command); 
+
+                default:
+                    await message.reply(`❌ Unknown Command: !${cmdName}\nType !uni for help.`);
+                    break;
+            }
+        }
+    } catch (error) {
+        logError(error); // Log to crash_logs.txt
+        console.error("Aura_Bot Error:", error);
+        await message.reply("⚠️ Aura_Bot encountered an error, but is still running! 🤖");
     }
-} catch (error){
-
-     
-        console.error("Aura_Bot Error Caught:", error);
-        await message.reply("⚠️ Aura_Bot encountered an error, but I'm still running!");
-
-}
-}
-);
+});
 
 client.initialize();

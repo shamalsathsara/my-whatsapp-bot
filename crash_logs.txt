@@ -1,0 +1,48 @@
+[2/26/2026, 9:39:21 PM] ERROR: TypeError: groupAdminHandler is not a function
+    at Client.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/AuraMain.js:234:23)
+[2/26/2026, 9:39:30 PM] ERROR: TypeError: groupAdminHandler is not a function
+    at Client.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/AuraMain.js:234:23)
+[2/26/2026, 9:42:53 PM] ERROR: ReferenceError: Cannot access 'command' before initialization
+    at Client.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/AuraMain.js:179:50)
+[2/26/2026, 9:43:00 PM] ERROR: ReferenceError: Cannot access 'command' before initialization
+    at Client.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/AuraMain.js:179:50)
+[2/26/2026, 9:43:11 PM] ERROR: ReferenceError: Cannot access 'command' before initialization
+    at Client.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/AuraMain.js:179:50)
+[2/26/2026, 9:46:49 PM] ERROR: ReferenceError: Cannot access 'command' before initialization
+    at Client.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/AuraMain.js:189:50)
+[2/26/2026, 9:52:35 PM] ERROR: TypeError: handleChatCommand is not a function
+    at Client.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/AuraMain.js:166:36)
+[2/26/2026, 9:57:32 PM] ERROR: TypeError: groupAdminHandler is not a function
+    at Client.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/AuraMain.js:77:19)
+    at Client.emit (node:events:517:28)
+    at Binding.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/whatsapp-web.js/src/Client.js:486:18)
+    at Binding.run (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Binding.js:132:46)
+    at #onBindingCalled (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Page.js:727:24)
+    at /home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Page.js:192:39
+    at /home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/third_party/mitt/mitt.js:62:7
+    at Array.map (<anonymous>)
+    at Object.emit (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/third_party/mitt/mitt.js:61:20)
+    at FrameManager.emit (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/EventEmitter.js:83:23)
+    at #onMainWorldBindingCalled (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Frame.js:120:32)
+    at /home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/third_party/mitt/mitt.js:62:7
+    at Array.map (<anonymous>)
+    at Object.emit (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/third_party/mitt/mitt.js:61:20)
+    at EventEmitter.emit (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/EventEmitter.js:83:23)
+    at #onContextBindingCalled (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/IsolatedWorld.js:55:23)
+[2/26/2026, 10:01:46 PM] ERROR: TypeError: groupAdminHandler is not a function
+    at Client.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/AuraMain.js:77:19)
+    at Client.emit (node:events:517:28)
+    at Binding.<anonymous> (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/whatsapp-web.js/src/Client.js:486:18)
+    at Binding.run (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Binding.js:132:46)
+    at #onBindingCalled (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Page.js:727:24)
+    at /home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Page.js:192:39
+    at /home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/third_party/mitt/mitt.js:62:7
+    at Array.map (<anonymous>)
+    at Object.emit (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/third_party/mitt/mitt.js:61:20)
+    at FrameManager.emit (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/EventEmitter.js:83:23)
+    at #onMainWorldBindingCalled (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Frame.js:120:32)
+    at /home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/third_party/mitt/mitt.js:62:7
+    at Array.map (<anonymous>)
+    at Object.emit (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/third_party/mitt/mitt.js:61:20)
+    at EventEmitter.emit (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/EventEmitter.js:83:23)
+    at #onContextBindingCalled (/home/shamal/Desktop/My_Files/my-whatsapp-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/IsolatedWorld.js:55:23)

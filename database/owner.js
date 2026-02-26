@@ -2,16 +2,15 @@
 
 
 
-// This file handles the owner command logic.
+
 const path = require('path');
-// Import the owner data from the JSON file.
+// Import the owner data from the JSON
 const ownerData = require('../owner.json');
 
 // This function sends a message with the bot owner's details.
 const handleOwnerCommand = async (message) => {
     try {
-        // Access the owner information for your bot.
-        // The key in your JSON file is "King_Aura", so we'll use that here.
+       
         const botDetails = ownerData.data.King_Aura; 
 
         if (!botDetails) {
@@ -19,8 +18,6 @@ const handleOwnerCommand = async (message) => {
             return;
         }
 
-        // Create the message with owner details.
-        // We'll also join the "team" array to display it nicely.
         const ownerMessage = `
 *Bot Owner Details:*
 *Name:* ${botDetails.owner}
@@ -29,8 +26,6 @@ const handleOwnerCommand = async (message) => {
 *Team:* ${botDetails.team.join(', ')}
 `;
         
-        // FIX: Temporarily remove the image sending part to isolate the issue.
-        // It seems the MessageMedia object is causing an internal library error
 
         
         // Send the text message only.

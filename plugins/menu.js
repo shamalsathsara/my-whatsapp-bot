@@ -5,17 +5,16 @@ const path = require('path');
 
 /**
  * Handles the "panel" command by sending a list of bot commands.
- * @param {import('whatsapp-web.js').Message} message The message object from the client.
+ * @param {import('whatsapp-web.js').Message} message from the client.
  */
 const handlePanelCommand = async (message) => {
     try {
-        // Define the list of commands for the panel.
-        // You can easily add more commands here in the future.
+        
 
         const imagePath = path.join(__dirname, '..', 'Images', 'owner_image.jpg');
         const media = MessageMedia.fromFilePath(imagePath);
 
-        // Define the path to the audio file.
+      
         const audioPath = path.join(__dirname, '..', 'Audios', 'voiceline.mp3');
         const audioMedia = MessageMedia.fromFilePath(audioPath);
 
@@ -28,7 +27,7 @@ const handlePanelCommand = async (message) => {
 ╚═══════════════════════════╝
 
 👤 *OWNER:* Shamal Sathsara
-🆔 *DEV:* WeAreCooked
+🆔 *DEV:* Team DaRk
 ⚙️ *PREFIX:* !
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -53,6 +52,8 @@ const handlePanelCommand = async (message) => {
   ▸ !𝗸𝗶𝗰𝗸    - Remove User from Group
   ▸ !𝗼𝘄𝗻𝗲𝗿   - Contact Developer
   ▸ !𝗽𝗶𝗻𝗴    - Check System Latency
+  
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       ✨ _Always evolving, King Aura_ ✨

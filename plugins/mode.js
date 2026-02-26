@@ -2,22 +2,19 @@
 
 /**
  * Checks if the message sender is the bot owner.
- * @param {import('whatsapp-web.js').Message} message The message object.
- * @param {string} botOwnerNumber The serialized phone number of the bot owner.
- * @returns {boolean} True if the sender is the owner, false otherwise.
+ * @param {import('whatsapp-web.js').Message} message 
+ * @param {string} botOwnerNumber 
+ * @returns {boolean} 
  */
 const isOwner = (message, botOwnerNumber) => {
-    // The message.from property is the serialized ID of the sender.
-    // We compare it to the serialized ID of the bot owner.
     return message.from === botOwnerNumber;
 };
 
 /**
  * Handles the "!private" command.
- * Sets the bot to private mode, where only the owner can use commands.
- * @param {import('whatsapp-web.js').Message} message The message object.
- * @param {string} botOwnerNumber The serialized phone number of the bot owner.
- * @param {boolean[]} modeState A single-element array to hold the bot's mode state.
+ * @param {import('whatsapp-web.js').Message} message 
+ * @param {string} botOwnerNumber 
+ * @param {boolean[]} modeState 
  */
 const handlePrivateCommand = async (message, botOwnerNumber, modeState) => {
     if (!isOwner(message, botOwnerNumber)) {
@@ -30,10 +27,10 @@ const handlePrivateCommand = async (message, botOwnerNumber, modeState) => {
 
 /**
  * Handles the "!public" command.
- * Sets the bot to public mode, where everyone can use commands.
- * @param {import('whatsapp-web.js').Message} message The message object.
- * @param {string} botOwnerNumber The serialized phone number of the bot owner.
- * @param {boolean[]} modeState A single-element array to hold the bot's mode state.
+ 
+ * @param {import('whatsapp-web.js').Message} message 
+ * @param {string} botOwnerNumber  phone number of the bot owner.
+ * @param {boolean[]} modeState  hold the bot's mode state.
  */
 const handlePublicCommand = async (message, botOwnerNumber, modeState) => {
     if (!isOwner(message, botOwnerNumber)) {
