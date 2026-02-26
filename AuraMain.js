@@ -70,6 +70,7 @@ client.on('ready', () => {
 
 // Main message listener
 client.on('message', async message => {
+    try{
     if (message.fromMe) return;
 
     const chat = await message.getChat();
@@ -146,11 +147,14 @@ if (!isNaN(message.body) && !message.body.startsWith('!')) {
         const labels = ["Past Papers", "Marking Scheme", "Short Notes"];
 
         if (links[selection]) {
+
+            const userName = message._data?.notifyName || "Student";
+
             let successMsg = `✅ *DOWNLOAD READY*\n\n`;
             successMsg += `📄 *Type:* ${labels[selection]}\n`;
             successMsg += `📚 *Subject:* ${session.subject}\n\n`;
             successMsg += `🔗 *Link:* ${links[selection]}\n\n`;
-            successMsg += `🚀 _Study hard, Shamal!_`;
+            successMsg += `🚀 _Study hard, ${userName}!_`;
             
             await message.reply(successMsg);
             delete userSession[message.from]; // Reset session
@@ -201,6 +205,14 @@ if (!isNaN(message.body) && !message.body.startsWith('!')) {
                 break;
         }
     }
-});
+} catch (error){
+
+     
+        console.error("Aura_Bot Error Caught:", error);
+        await message.reply("⚠️ Aura_Bot encountered an error, but I'm still running!");
+
+}
+}
+);
 
 client.initialize();
